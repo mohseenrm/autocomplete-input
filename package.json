@@ -10,6 +10,8 @@
     "format": "prettier --write app/**/*.{js,jsx,ts,tsx}"
   },
   "dependencies": {
+    "@nextui-org/react": "^2.2.9",
+    "framer-motion": "^10.17.12",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18"
