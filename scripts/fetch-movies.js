@@ -2,8 +2,13 @@
 
 require("dotenv").config()
 const { stringify } = require("qs")
+const path = require("path")
+const process = require("process")
+const { createWriteStream } = require("fs")
 
 const args = process.argv.slice(2)
+
+const MOVIES_DATA_PATH = path.resolve(process.cwd(), "./data/movies.json")
 
 if (args.length !== 2) {
   console.error("Usage: fetch-movies.js <start page> <end page>")
@@ -74,11 +79,18 @@ const main = async () => {
   const movies = []
   for (let page = startPage; page <= endPage; page++) {
     const results = await fetchMovies(page)
-    // 1. append (stream) results to movies file
-    // 2. if results is empty, break
     movies.push(...results)
   }
+
   console.log(JSON.stringify(movies))
+  const writeStream = createWriteStream(MOVIES_DATA_PATH, { flags: "a" })
+  for (const movie of movies) {
+    writeStream.write(JSON.stringify(movie))
+    writeStream.write("\n")
+  }
+
+  writeStream.end()
+  console.log("Done! 🎉")
 }
 
 main()

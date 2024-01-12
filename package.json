@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "prettier --write app/**/*.{js,jsx,ts,tsx}"
+    "format": "prettier --write app/**/*.{js,jsx,ts,tsx}",
+    "data:populate:movies": "parallel --colsep ' ' -a fetch-movies.args node scripts/fetch-movies.js {1} {2}"
   },
   "dependencies": {
     "@nextui-org/react": "^2.2.9",
