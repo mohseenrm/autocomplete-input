@@ -36,6 +36,7 @@ const traverseTree = cache(
       if (results.size === 10) {
         break
       }
+      
       if (key === EOF && node[EOF]) {
         const id = node[ID]
         if (id !== undefined) {
