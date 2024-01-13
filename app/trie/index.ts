@@ -23,43 +23,47 @@ type PrefixTrie = {
 //   void getPrefixTrie()
 // }
 
-const traverseTree = async (node: PrefixTrie): Promise<Movie[]> => {
-  const index = await getMovieIndex()
-  const results = new Set<Movie>()
-  const keys = Object.keys(node)
-
-  for (const key of keys) {
-    if (results.size === 10) {
-      break
-    }
-    if (key === EOF && node[EOF]) {
-      const id = node[ID]
-      if (id !== undefined) {
-        results.add(index[id])
+const traverseTree = cache(
+  async (node: PrefixTrie): Promise<Movie[]> => {
+    const index = await getMovieIndex()
+    const results = new Set<Movie>()
+    const keys = Object.keys(node)
+  
+    for (const key of keys) {
+      if (results.size === 10) {
+        break
       }
-    } else if (typeof node[key] !== "object") {
-      continue
-    } else {
-      const nextNode = node[key]
-      const nextResults = await traverseTree(nextNode)
-      nextResults.forEach((result) => results.add(result))
+      if (key === EOF && node[EOF]) {
+        const id = node[ID]
+        if (id !== undefined) {
+          results.add(index[id])
+        }
+      } else if (typeof node[key] !== "object") {
+        continue
+      } else {
+        const nextNode = node[key]
+        const nextResults = await traverseTree(nextNode)
+        nextResults.forEach((result) => results.add(result))
+      }
     }
+    return Array.from(results)
   }
-  return Array.from(results)
-}
+)
 
-const searchTrie = async (
-  prefixTrie: PrefixTrie,
-  query: string
-): Promise<Movie[]> => {
-  const lowerCaseQuery = query.toLowerCase()
-  const chars = lowerCaseQuery.split("")
-  const results = chars.reduce((acc, char: string) => {
-    if (acc.hasOwnProperty(char)) {
-      return acc[char]
-    }
-    return acc
-  }, prefixTrie)
-
-  return traverseTree(results)
-}
+const searchTrie = cache(
+  async (
+    prefixTrie: PrefixTrie,
+    query: string
+  ): Promise<Movie[]> => {
+    const lowerCaseQuery = query.toLowerCase()
+    const chars = lowerCaseQuery.split("")
+    const results = chars.reduce((acc, char: string) => {
+      if (acc.hasOwnProperty(char)) {
+        return acc[char]
+      }
+      return acc
+    }, prefixTrie)
+  
+    return traverseTree(results)
+  }
+)
