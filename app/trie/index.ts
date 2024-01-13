@@ -25,28 +25,33 @@ type PrefixTrie = {
 
 const traverseTree = async (node: PrefixTrie): Promise<Movie[]> => {
   const index = await getMovieIndex()
-  const results: Movie[] = []
+  const results = new Set<Movie>()
   const keys = Object.keys(node)
 
   for (const key of keys) {
-    if (key === EOF && node[EOF] === true) {
+    if (results.size === 10) {
+      break
+    }
+    if (key === EOF && node[EOF]) {
       const id = node[ID]
       if (id !== undefined) {
-        results.push(index[id])
+        results.add(index[id])
       }
+    } else if (typeof node[key] !== "object") {
+      continue
     } else {
       const nextNode = node[key]
-      if (typeof nextNode !== "object") {
-        continue
-      }
       const nextResults = await traverseTree(nextNode)
-      results.push(...nextResults)
+      nextResults.forEach((result) => results.add(result))
     }
   }
-  return results
+  return Array.from(results)
 }
 
-const searchTrie = async (prefixTrie: PrefixTrie, query: string): Promise<Movie[]> => {
+const searchTrie = async (
+  prefixTrie: PrefixTrie,
+  query: string
+): Promise<Movie[]> => {
   const lowerCaseQuery = query.toLowerCase()
   const chars = lowerCaseQuery.split("")
   const results = chars.reduce((acc, char: string) => {
