@@ -19,9 +19,9 @@ type PrefixTrie = {
   readonly [ID]?: number
 }
 
-// export const preload = () => {
-//   void getPrefixTrie()
-// }
+export const preload = (prefixTrie: PrefixTrie, query: string) => {
+  void searchTrie(prefixTrie, query)
+}
 
 const traverseTree = cache(
   async (node: PrefixTrie, index: Record<string, Movie>): Promise<Movie[]> => {
