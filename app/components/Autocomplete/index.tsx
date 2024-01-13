@@ -2,7 +2,15 @@ import { Autocomplete, AutocompleteItem, Avatar } from "@nextui-org/react"
 
 export default function AutoComplete() {
   return (
-    <Autocomplete className="max-w-xs" label="Select country">
+    <Autocomplete
+      className={"min-w-96"}
+      size={"lg"}
+      radius={"full"}
+      label="Select country"
+      fullWidth={true}
+      scrollShadowProps={{ isEnabled: true }}
+      description="Search from 10,000 movies after year 2000"
+    >
       <AutocompleteItem
         key="argentina"
         startContent={
