@@ -28,7 +28,7 @@ const traverseTree = cache(
     const index = await getMovieIndex()
     const results = new Set<Movie>()
     const keys = Object.keys(node)
-  
+
     for (const key of keys) {
       if (results.size === 10) {
         break
@@ -50,7 +50,7 @@ const traverseTree = cache(
   }
 )
 
-const searchTrie = cache(
+export const searchTrie = cache(
   async (
     prefixTrie: PrefixTrie,
     query: string
