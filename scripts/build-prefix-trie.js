@@ -5,6 +5,7 @@ const MOVIES_DATA_PATH = path.resolve(process.cwd(), "./data/movies.json")
 const PREFIX_TRIE_DATA_PATH = path.resolve(process.cwd(), "./data/prefix-trie.json")
 
 const EOF = "EOF"
+const ID = "ID"
 
 const movies = require(MOVIES_DATA_PATH)
 
@@ -36,9 +37,8 @@ const createPrefixTrie = (movies, trie = {}) => {
         }
       })
       currentNode[EOF] = true
+      currentNode[ID] = movie.id
     })
-
-    trie[EOF] = true
   })
 
   return trie
