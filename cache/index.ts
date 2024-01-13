@@ -23,7 +23,7 @@ export const getTrie = cache(async () => {
 export const getMovieIndex = cache(async () => {
   try {
     console.log("Reading movie index from disk")
-    const movieIndexPath = resolve(process.cwd(), "data/movie-index.json")
+    const movieIndexPath = resolve(process.cwd(), "data/movies-index.json")
     const movieIndex = await readFile(movieIndexPath, { encoding: "utf-8" })
     return JSON.parse(movieIndex)
   } catch (error) {

@@ -24,10 +24,13 @@ type PrefixTrie = {
 // }
 
 const traverseTree = cache(
-  async (node: PrefixTrie): Promise<Movie[]> => {
-    const index = await getMovieIndex()
-    const results = new Set<Movie>()
+  async (node: PrefixTrie, index: Record<string, Movie>): Promise<Movie[]> => {
+    const results = new Set<number>()
     const keys = Object.keys(node)
+
+    if (!node) {
+      return []
+    }
 
     for (const key of keys) {
       if (results.size === 10) {
@@ -36,25 +39,26 @@ const traverseTree = cache(
       if (key === EOF && node[EOF]) {
         const id = node[ID]
         if (id !== undefined) {
-          results.add(index[id])
+          results.add(id)
         }
       } else if (typeof node[key] !== "object") {
         continue
       } else {
         const nextNode = node[key]
-        const nextResults = await traverseTree(nextNode)
-        nextResults.forEach((result) => results.add(result))
+        const nextResults = await traverseTree(nextNode, index)
+        nextResults.forEach((result) => results.add(result.id))
       }
     }
-    return Array.from(results)
+
+    const finalResults = Array.from(results).map((id) => index[id])
+
+    return finalResults
   }
 )
 
 export const searchTrie = cache(
-  async (
-    prefixTrie: PrefixTrie,
-    query: string
-  ): Promise<Movie[]> => {
+  async (prefixTrie: PrefixTrie, query: string): Promise<Movie[]> => {
+    const index = await getMovieIndex()
     const lowerCaseQuery = query.toLowerCase()
     const chars = lowerCaseQuery.split("")
     const results = chars.reduce((acc, char: string) => {
@@ -63,7 +67,7 @@ export const searchTrie = cache(
       }
       return acc
     }, prefixTrie)
-  
-    return traverseTree(results)
+
+    return traverseTree(results, index)
   }
 )

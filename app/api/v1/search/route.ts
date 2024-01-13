@@ -1,5 +1,6 @@
 import { type NextRequest } from "next/server"
 import { getTrie } from "@/cache"
+import { searchTrie } from "@/app/trie"
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -18,23 +19,10 @@ export async function GET(request: NextRequest) {
   }
 
   const prefixTrie = trie
-  const lowerCaseQuery = query.toLowerCase()
-  const chars = lowerCaseQuery.split("")
-  const results = chars.reduce((acc, char: string) => {
-    if (acc.hasOwnProperty(char)) {
-      return acc[char]
-    }
-    return acc
-  }, prefixTrie)
-  console.log(results)
+  const results = await searchTrie(prefixTrie, query)
 
   return Response.json({
     query,
-    results: [
-      {
-        title: "Hello World",
-        description: "This is a test",
-      },
-    ],
+    results,
   })
 }
