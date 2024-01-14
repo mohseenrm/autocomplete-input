@@ -9,7 +9,7 @@ import useMovieList from "@/app/hooks/useMovieList"
 export default function AutoCompleteContainer() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [query, setQuery] = useState<string>("")
-  const debouncedQuery = useDebounce(query, 500)
+  const debouncedQuery = useDebounce(query, 750)
   const { movies, isLoading, hasMore, loadMore } = useMovieList(debouncedQuery)
 
   const [_, scrollRef] = useInfiniteScroll({
