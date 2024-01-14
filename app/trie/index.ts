@@ -17,7 +17,7 @@ const traverseTree = cache(
     }
 
     for (const key of keys) {
-      if (results.size === 10) {
+      if (results.size >= 10) {
         break
       }
 
@@ -31,7 +31,12 @@ const traverseTree = cache(
       } else {
         const nextNode = node[key]
         const nextResults = await traverseTree(nextNode, index)
-        nextResults.forEach((result) => results.add(result.id))
+        nextResults.forEach((result) => {
+          if (results.size >= 10) {
+            return
+          }
+          results.add(result.id)
+        })
       }
     }
 

@@ -45,16 +45,6 @@ export async function GET(request: NextRequest) {
     )
   }
 
-  if (query.length < 3) {
-    return Response.json(
-      {
-        results: [],
-        error: "Query must be at least 3 characters",
-      },
-      { status: 400 }
-    )
-  }
-
   const trie = await getTrie()
   const prefixTrie = trie
   const results = await searchTrie(prefixTrie, query)
