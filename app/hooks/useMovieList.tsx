@@ -18,7 +18,12 @@ const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[
   return data.results
 }
 
-const hasMore = (page: number): boolean => page >= 1 && page < 1000
+const hasMore = (page: number, query: string = ""): boolean => {
+  if (query !== "") {
+    return true
+  }
+  return page >= 1 && page < 1000
+}
 
 type UseMovieList = {
   movies: Movie[]
