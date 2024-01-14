@@ -7,6 +7,8 @@ export async function GET(request: NextRequest) {
   const query = searchParams.get("query")
   const page = searchParams.get("page")
 
+  console.log("env: ", process.env)
+
   if (query === null || query === undefined) {
     return Response.json(
       {
