@@ -30,6 +30,8 @@ type UseMovieList = {
 export default function useMovieList(query: string = "", page: number = 1): UseMovieList {
   const [pageNumber, setPageNumber] = useState<number>(page)
   const [movies, setMovies] = useState<Movie[]>([])
+  const [restoreMovies, setRestoreMovies] = useState<boolean>(false)
+
   const { data, isPending, isFetching } = useQuery({
     queryKey: ["movies", query, pageNumber],
     queryFn: ({ queryKey }) => fetchMovies(queryKey[1] as string, queryKey[2] as number),
@@ -37,10 +39,27 @@ export default function useMovieList(query: string = "", page: number = 1): UseM
   const isLoading = isPending || isFetching
 
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (data && data.length > 0 && query === "") {
       setMovies((prev) => prev.concat(data))
+    } else if (data && data.length > 0 && query !== "") {
+      setMovies(data)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
+
+  useEffect(() => {
+    // restore previous movies if query is cleared
+    if (query === "" && restoreMovies) {
+      setMovies([])
+      setRestoreMovies(false)
+      setPageNumber(1)
+    }
+
+    if (query !== "") {
+      setRestoreMovies(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query])
 
   const loadMore = () => {
     if (hasMore(pageNumber)) {
