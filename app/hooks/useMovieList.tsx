@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { Movie } from "@/types"
-import { baseUrl } from "@/app/constants"
+import { getBaseUrl } from "@/app/constants/client"
 import { stringify } from "qs"
 
 const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[]> => {
@@ -12,7 +12,7 @@ const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[
     query,
   }
   const response = await fetch(
-    `${baseUrl}/api/v1/search${stringify(params, { addQueryPrefix: true })}`
+    `${getBaseUrl()}/api/v1/search${stringify(params, { addQueryPrefix: true })}`
   )
   const data = (await response.json()) as { results: Movie[] }
   return data.results
