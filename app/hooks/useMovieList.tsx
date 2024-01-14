@@ -75,7 +75,7 @@ export default function useMovieList(query: string = "", page: number = 1): UseM
   return {
     movies,
     isLoading,
-    hasMore: hasMore(pageNumber),
+    hasMore: hasMore(pageNumber, query),
     loadMore,
   }
 }
