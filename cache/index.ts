@@ -6,6 +6,7 @@ import { readFile } from "fs/promises"
 export const preload = () => {
   void getTrie()
   void getMovieIndex()
+  void getMovies()
 }
 
 export const getTrie = cache(async () => {
@@ -29,5 +30,17 @@ export const getMovieIndex = cache(async () => {
   } catch (error) {
     console.error(error)
     return {}
+  }
+})
+
+export const getMovies = cache(async () => {
+  try {
+    console.log("Reading movies from disk")
+    const moviesPath = resolve(process.cwd(), "data/movies.json")
+    const movies = await readFile(moviesPath, { encoding: "utf-8" })
+    return JSON.parse(movies)
+  } catch (error) {
+    console.error(error)
+    return []
   }
 })
