@@ -27,23 +27,22 @@ type UseMovieList = {
   loadMore: () => void
 }
 
-export default function useMovieList(page: number = 1) {
+export default function useMovieList(page: number = 1): UseMovieList {
   const [pageNumber, setPageNumber] = useState<number>(page)
   const [movies, setMovies] = useState<Movie[]>([])
   const { data, isPending, isFetching } = useQuery({
-    queryKey: ["movies", { page: pageNumber }],
-    queryFn: ({ queryKey }) => fetchMovies((queryKey[1] as { page: number }).page),
+    queryKey: ["movies", pageNumber],
+    queryFn: ({ queryKey }) => fetchMovies(queryKey[1] as number),
   })
   const isLoading = isPending || isFetching
 
   useEffect(() => {
     if (data && data.length > 0) {
-      setMovies((prev) => [...prev, ...data])
+      setMovies((prev) => prev.concat(data))
     }
   }, [data])
 
   const loadMore = () => {
-    console.log("loadMore: ", pageNumber)
     if (hasMore(pageNumber)) {
       setPageNumber(pageNumber + 1)
     }

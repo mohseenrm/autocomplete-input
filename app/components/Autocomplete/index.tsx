@@ -7,6 +7,7 @@ import useMovieList from "@/app/hooks/useMovieList"
 
 export default function AutoCompleteContainer() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [query, setQuery] = useState<string>("")
   const { movies, isLoading, hasMore, loadMore } = useMovieList()
 
   const [_, scrollRef] = useInfiniteScroll({
@@ -16,13 +17,14 @@ export default function AutoCompleteContainer() {
     onLoadMore: loadMore,
   })
 
-  console.log("render AutoCompleteContainer: ", movies, isLoading)
   return (
     <Autocomplete
       isLoading={isLoading}
       items={movies}
       setIsOpen={setIsOpen}
-      scrollRef={scrollRef}
+      scrollRef={query !== "" ? undefined : scrollRef}
+      inputValue={query}
+      onInputChange={setQuery}
     />
   )
 }

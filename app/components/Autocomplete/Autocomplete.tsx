@@ -5,6 +5,8 @@ type AutoCompleteProps<T> = {
   setIsOpen?: (isOpen: boolean) => void
   items: T[]
   scrollRef?: React.RefObject<HTMLElement>
+  inputValue?: string
+  onInputChange?: (value: string) => void
 }
 
 export default function AutoComplete<T extends { id: number; title: string }>(props: AutoCompleteProps<T>) {
@@ -21,6 +23,8 @@ export default function AutoComplete<T extends { id: number; title: string }>(pr
       isLoading={props.isLoading}
       onOpenChange={props.setIsOpen}
       scrollRef={props.scrollRef}
+      inputValue={props.inputValue}
+      onInputChange={props.onInputChange}
     >
       {(item: T) => (
         <AutocompleteItem
