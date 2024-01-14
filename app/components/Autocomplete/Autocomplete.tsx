@@ -1,124 +1,37 @@
 import { Autocomplete, AutocompleteItem, Avatar } from "@nextui-org/react"
 
-export default function AutoComplete() {
+type AutoCompleteProps<T> = {
+  isLoading?: boolean
+  items: T[]
+}
+
+export default function AutoComplete<T extends { id: number; title: string }>(props: AutoCompleteProps<T>) {
   return (
     <Autocomplete
       className={"min-w-96"}
       size={"lg"}
       radius={"full"}
-      label="Select country"
+      label="Select a movie"
       fullWidth={true}
       scrollShadowProps={{ isEnabled: true }}
       description="Search from 10,000 movies after year 2000"
+      defaultItems={props.items}
+      isLoading={props.isLoading}
     >
-      <AutocompleteItem
-        key="argentina"
-        startContent={
-          <Avatar
-            alt="Argentina"
-            className="w-6 h-6"
-            src="https://flagcdn.com/ar.svg"
-          />
-        }
-      >
-        Argentina
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="venezuela"
-        startContent={
-          <Avatar
-            alt="Venezuela"
-            className="w-6 h-6"
-            src="https://flagcdn.com/ve.svg"
-          />
-        }
-      >
-        Venezuela
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="brazil"
-        startContent={
-          <Avatar
-            alt="Brazil"
-            className="w-6 h-6"
-            src="https://flagcdn.com/br.svg"
-          />
-        }
-      >
-        Brazil
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="switzerland"
-        startContent={
-          <Avatar
-            alt="Switzerland"
-            className="w-6 h-6"
-            src="https://flagcdn.com/ch.svg"
-          />
-        }
-      >
-        Switzerland
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="germany"
-        startContent={
-          <Avatar
-            alt="Germany"
-            className="w-6 h-6"
-            src="https://flagcdn.com/de.svg"
-          />
-        }
-      >
-        Germany
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="spain"
-        startContent={
-          <Avatar
-            alt="Spain"
-            className="w-6 h-6"
-            src="https://flagcdn.com/es.svg"
-          />
-        }
-      >
-        Spain
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="france"
-        startContent={
-          <Avatar
-            alt="France"
-            className="w-6 h-6"
-            src="https://flagcdn.com/fr.svg"
-          />
-        }
-      >
-        France
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="italy"
-        startContent={
-          <Avatar
-            alt="Italy"
-            className="w-6 h-6"
-            src="https://flagcdn.com/it.svg"
-          />
-        }
-      >
-        Italy
-      </AutocompleteItem>
-      <AutocompleteItem
-        key="mexico"
-        startContent={
-          <Avatar
-            alt="Mexico"
-            className="w-6 h-6"
-            src="https://flagcdn.com/mx.svg"
-          />
-        }
-      >
-        Mexico
-      </AutocompleteItem>
+      {(item: T) => (
+        <AutocompleteItem
+          key={item.id}
+          // startContent={
+          //   <Avatar
+          //     alt={item}
+          //     className="w-6 h-6"
+          //     src={`https://flagcdn.com/${item.toLowerCase()}.svg`}
+          //   />
+          // }
+        >
+          {item.title}
+        </AutocompleteItem>
+      )}
     </Autocomplete>
   )
 }

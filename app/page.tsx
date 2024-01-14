@@ -11,7 +11,7 @@ export default function Home() {
     <NextUIProvider>
       <QueryClientProvider client={queryClient}>
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
-          <h1>Aloha!</h1>
+          <h1>TMDB Autocomplete</h1>
           <div className="mt-5">
             <AutoComplete />
           </div>
