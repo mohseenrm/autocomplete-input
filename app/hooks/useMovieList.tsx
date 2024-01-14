@@ -43,6 +43,7 @@ export default function useMovieList(page: number = 1) {
   }, [data])
 
   const loadMore = () => {
+    console.log("loadMore: ", pageNumber)
     if (hasMore(pageNumber)) {
       setPageNumber(pageNumber + 1)
     }

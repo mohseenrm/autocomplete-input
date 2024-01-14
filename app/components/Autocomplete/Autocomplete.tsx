@@ -2,7 +2,9 @@ import { Autocomplete, AutocompleteItem, Avatar } from "@nextui-org/react"
 
 type AutoCompleteProps<T> = {
   isLoading?: boolean
+  setIsOpen?: (isOpen: boolean) => void
   items: T[]
+  scrollRef?: React.RefObject<HTMLElement>
 }
 
 export default function AutoComplete<T extends { id: number; title: string }>(props: AutoCompleteProps<T>) {
@@ -17,6 +19,8 @@ export default function AutoComplete<T extends { id: number; title: string }>(pr
       description="Search from 10,000 movies after year 2000"
       defaultItems={props.items}
       isLoading={props.isLoading}
+      onOpenChange={props.setIsOpen}
+      scrollRef={props.scrollRef}
     >
       {(item: T) => (
         <AutocompleteItem

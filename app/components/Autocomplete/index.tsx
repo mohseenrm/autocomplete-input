@@ -1,8 +1,28 @@
+"use client"
+import { useState } from "react"
+import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll"
+
 import Autocomplete from "@/app/components/Autocomplete/Autocomplete"
 import useMovieList from "@/app/hooks/useMovieList"
 
 export default function AutoCompleteContainer() {
-  const { movies, isLoading } = useMovieList()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const { movies, isLoading, hasMore, loadMore } = useMovieList()
+
+  const [_, scrollRef] = useInfiniteScroll({
+    hasMore,
+    isEnabled: isOpen,
+    shouldUseLoader: false,
+    onLoadMore: loadMore,
+  })
+
   console.log("render AutoCompleteContainer: ", movies, isLoading)
-  return <Autocomplete isLoading={isLoading} items={movies} />
+  return (
+    <Autocomplete
+      isLoading={isLoading}
+      items={movies}
+      setIsOpen={setIsOpen}
+      scrollRef={scrollRef}
+    />
+  )
 }
