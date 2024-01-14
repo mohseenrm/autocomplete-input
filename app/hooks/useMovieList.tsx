@@ -55,7 +55,7 @@ export default function useMovieList(query: string = "", page: number = 1): UseM
       setPageNumber(1)
     }
 
-    if (query !== "") {
+    if (query !== "" && !restoreMovies) {
       setRestoreMovies(true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
