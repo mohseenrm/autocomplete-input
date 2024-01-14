@@ -2,6 +2,7 @@ import "server-only"
 import { cache } from "react"
 import { resolve } from "path"
 import { readFile } from "fs/promises"
+import { PAGE_SIZE } from "@/app/constants"
 
 export const preload = () => {
   void getTrie()
@@ -39,6 +40,18 @@ export const getMovies = cache(async () => {
     const moviesPath = resolve(process.cwd(), "data/movies.json")
     const movies = await readFile(moviesPath, { encoding: "utf-8" })
     return JSON.parse(movies)
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+})
+
+export const getMoviesWithArgs = cache(async (args: { page: number }) => {
+  try {
+    const movies = await getMovies()
+    const { page } = args
+    const results = movies.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    return results
   } catch (error) {
     console.error(error)
     return []

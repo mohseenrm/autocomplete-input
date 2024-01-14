@@ -1,8 +1,6 @@
 import { type NextRequest } from "next/server"
-import { getTrie, getMovies } from "@/cache"
+import { getTrie, getMoviesWithArgs } from "@/cache"
 import { searchTrie } from "@/app/trie"
-
-const PAGE_SIZE = 10
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -30,8 +28,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (query === "" && page) {
-    const movies = await getMovies()
-    const results = movies.slice((Number(page) - 1) * PAGE_SIZE, Number(page) * PAGE_SIZE)
+    const results = await getMoviesWithArgs({ page: Number(page) })
     return Response.json({
       query,
       results,

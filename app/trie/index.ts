@@ -1,23 +1,7 @@
 import "server-only"
 import { cache } from "react"
 import { getMovieIndex } from "@/cache"
-
-type Movie = {
-  id: number
-  title: string
-  poster_path: string
-  release_date: string
-}
-
-const EOF = "EOF" as const
-const ID = "ID" as const
-
-type PrefixTrie = {
-  readonly [key: string]: PrefixTrie
-} & {
-  readonly [EOF]: boolean
-  readonly [ID]?: number
-}
+import { Movie, PrefixTrie, EOF, ID } from "@/types"
 
 export const preload = (prefixTrie: PrefixTrie, query: string) => {
   void searchTrie(prefixTrie, query)
@@ -36,7 +20,7 @@ const traverseTree = cache(
       if (results.size === 10) {
         break
       }
-      
+
       if (key === EOF && node[EOF]) {
         const id = node[ID]
         if (id !== undefined) {
