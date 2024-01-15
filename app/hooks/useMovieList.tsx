@@ -11,6 +11,7 @@ const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[
     page,
     query,
   }
+  console.log("baseUrl: ", getBaseUrl())
   const response = await fetch(
     `${getBaseUrl()}/api/v1/search${stringify(params, { addQueryPrefix: true })}`
   )

@@ -7,9 +7,12 @@ type AutoCompleteProps<T> = {
   scrollRef?: React.RefObject<HTMLElement>
   inputValue?: string
   onInputChange?: (value: string) => void
+  onSelectionChange?: (key: string | number) => void
 }
 
-export default function AutoComplete<T extends { id: number; title: string }>(props: AutoCompleteProps<T>) {
+export default function AutoComplete<T extends { id: number; title: string }>(
+  props: AutoCompleteProps<T>
+) {
   return (
     <Autocomplete
       className={"min-w-96"}
@@ -25,20 +28,10 @@ export default function AutoComplete<T extends { id: number; title: string }>(pr
       scrollRef={props.scrollRef}
       inputValue={props.inputValue}
       onInputChange={props.onInputChange}
+      onSelectionChange={props.onSelectionChange}
     >
       {(item: T) => (
-        <AutocompleteItem
-          key={item.id}
-          // startContent={
-          //   <Avatar
-          //     alt={item}
-          //     className="w-6 h-6"
-          //     src={`https://flagcdn.com/${item.toLowerCase()}.svg`}
-          //   />
-          // }
-        >
-          {item.title}
-        </AutocompleteItem>
+        <AutocompleteItem key={item.id}>{item.title}</AutocompleteItem>
       )}
     </Autocomplete>
   )
