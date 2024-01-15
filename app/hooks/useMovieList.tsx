@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import type { Movie } from "@/types"
-import { getBaseUrl } from "@/app/constants/client"
+import { getBaseUrl, STALE_TIME } from "@/app/constants/client"
 import { stringify } from "qs"
 
 const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[]> => {
@@ -40,6 +40,7 @@ export default function useMovieList(query: string = ""): UseMovieList {
   const { data, isPending, isFetching, refetch } = useQuery({
     queryKey: ["movies", query, pageNumber],
     queryFn: ({ queryKey }) => fetchMovies(queryKey[1] as string, queryKey[2] as number),
+    staleTime: STALE_TIME,
   })
   const isLoading = isPending || isFetching
 
