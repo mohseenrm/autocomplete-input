@@ -9,13 +9,18 @@ import type { Movie } from "@/types"
 
 type AutoCompleteContainerProps = {
   onSelectMovie: (movie: Movie) => void
+  selectedMovie?: boolean
 }
 
-export default function AutoCompleteContainer({ onSelectMovie }: AutoCompleteContainerProps) {
+export default function AutoCompleteContainer({
+  onSelectMovie,
+  selectedMovie,
+}: AutoCompleteContainerProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [query, setQuery] = useState<string>("")
   const debouncedQuery = useDebounce(query, 750)
-  const { movies, isLoading, hasMore, loadMore, setMovies } = useMovieList(debouncedQuery)
+  const { movies, isLoading, hasMore, loadMore, setMovies, time, serverTime } =
+    useMovieList(debouncedQuery)
   const prevMovies = useRef<Movie[]>(movies)
 
   useEffect(() => {
@@ -46,15 +51,30 @@ export default function AutoCompleteContainer({ onSelectMovie }: AutoCompleteCon
     }
   }
 
+  const textClassName = selectedMovie ? "text-slate-100" : "text-black"
+
   return (
-    <Autocomplete
-      isLoading={isLoading}
-      items={movies}
-      setIsOpen={setIsOpen}
-      scrollRef={query !== "" ? undefined : scrollRef}
-      inputValue={query}
-      onInputChange={setQuery}
-      onSelectionChange={onSelectionChange}
-    />
+    <>
+      <Autocomplete
+        isLoading={isLoading}
+        items={movies}
+        setIsOpen={setIsOpen}
+        scrollRef={query !== "" ? undefined : scrollRef}
+        inputValue={query}
+        onInputChange={setQuery}
+        onSelectionChange={onSelectionChange}
+      />
+
+      {serverTime !== 0 && movies.length && (
+        <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="server">
+          Server: {movies.length} result(s) in {serverTime}ms
+        </div>
+      )}
+      {time !== 0 && movies.length && (
+        <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="network">
+          Network: {movies.length} result(s) in {time}ms
+        </div>
+      )}
+    </>
   )
 }

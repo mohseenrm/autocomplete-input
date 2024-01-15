@@ -6,16 +6,23 @@ import type { Movie } from "@/types"
 import { getBaseUrl, STALE_TIME } from "@/app/constants/client"
 import { stringify } from "qs"
 
-const fetchMovies = async (query: string = "", page: number = 1): Promise<Movie[]> => {
+const fetchMovies = async (
+  query: string = "",
+  page: number = 1
+): Promise<{ results: Movie[]; time: number; serverTime: number }> => {
+  const start = Date.now()
   const params = {
     page,
     query,
   }
   const response = await fetch(
-    `${getBaseUrl()}/api/v1/search${stringify(params, { addQueryPrefix: true })}`
+    `${getBaseUrl()}/api/v1/search${stringify(params, {
+      addQueryPrefix: true,
+    })}`
   )
-  const data = (await response.json()) as { results: Movie[] }
-  return data.results
+  const data = (await response.json()) as { results: Movie[], serverTime: number }
+  const diff = Date.now() - start
+  return { results: data.results, time: diff, serverTime: data.serverTime }
 }
 
 const hasMore = (page: number, query: string = ""): boolean => {
@@ -31,6 +38,8 @@ type UseMovieList = {
   hasMore: boolean
   loadMore: () => void
   setMovies: (movies: Movie[]) => void
+  time?: number
+  serverTime?: number
 }
 
 export default function useMovieList(query: string = ""): UseMovieList {
@@ -39,16 +48,17 @@ export default function useMovieList(query: string = ""): UseMovieList {
 
   const { data, isPending, isFetching, refetch } = useQuery({
     queryKey: ["movies", query, pageNumber],
-    queryFn: ({ queryKey }) => fetchMovies(queryKey[1] as string, queryKey[2] as number),
+    queryFn: ({ queryKey }) =>
+      fetchMovies(queryKey[1] as string, queryKey[2] as number),
     staleTime: STALE_TIME,
   })
   const isLoading = isPending || isFetching
 
   useEffect(() => {
-    if (data && data.length > 0 && query === "") {
-      setMovies((prev) => prev.concat(data))
-    } else if (data && data.length > 0 && query !== "") {
-      setMovies(data)
+    if (data?.results && data.results.length > 0 && query === "") {
+      setMovies((prev) => prev.concat(data.results))
+    } else if (data?.results && data.results.length > 0 && query !== "") {
+      setMovies(data.results)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
@@ -65,5 +75,7 @@ export default function useMovieList(query: string = ""): UseMovieList {
     hasMore: hasMore(pageNumber, query),
     loadMore,
     setMovies,
+    time: data?.time,
+    serverTime: data?.serverTime,
   }
 }

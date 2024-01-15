@@ -3,6 +3,7 @@ import { getTrie, getMoviesWithArgs } from "@/cache"
 import { searchTrie } from "@/app/trie"
 
 export async function GET(request: NextRequest) {
+  const start = Date.now()
   const searchParams = request.nextUrl.searchParams
   const query = searchParams.get("query")
   const page = searchParams.get("page")
@@ -28,10 +29,12 @@ export async function GET(request: NextRequest) {
   }
 
   if (query === "" && page) {
+    const diff = Date.now() - start
     const results = await getMoviesWithArgs({ page: Number(page) })
     return Response.json({
       query,
       results,
+      serverTime: diff,
     })
   }
 
@@ -48,9 +51,11 @@ export async function GET(request: NextRequest) {
   const trie = await getTrie()
   const prefixTrie = trie
   const results = await searchTrie(prefixTrie, query)
+  const diff = Date.now() - start
 
   return Response.json({
     query,
     results,
+    serverTime: diff,
   })
 }

@@ -30,7 +30,10 @@ export default function Home() {
         >
           <h1 className={h1ClassName}>TMDB Autocomplete</h1>
           <div className="mt-5">
-            <AutoComplete onSelectMovie={(movie) => setSelectedMovie(movie)} />
+            <AutoComplete
+              onSelectMovie={(movie) => setSelectedMovie(movie)}
+              selectedMovie={selectedMovie !== undefined}
+            />
           </div>
         </main>
         <ReactQueryDevtools initialIsOpen={false} />
