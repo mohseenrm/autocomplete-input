@@ -65,16 +65,18 @@ export default function AutoCompleteContainer({
         onSelectionChange={onSelectionChange}
       />
 
-      {serverTime !== 0 && movies.length && (
-        <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="server">
-          Server: {movies.length} result(s) in {serverTime}ms
-        </div>
-      )}
-      {time !== 0 && movies.length && (
-        <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="network">
-          Network: {movies.length} result(s) in {time}ms
-        </div>
-      )}
+      <div style={{ position: "fixed", top: "0px", right: "0px", margin: "2rem 3rem" }}>
+        {Number(serverTime) !== 0 && movies.length && (
+          <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="server">
+            Server: {movies.length} result(s) in {serverTime}ms
+          </div>
+        )}
+        {Number(time) !== 0 && movies.length && (
+          <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="network">
+            Network: {movies.length} result(s) in {time}ms
+          </div>
+        )}
+      </div>
     </>
   )
 }
