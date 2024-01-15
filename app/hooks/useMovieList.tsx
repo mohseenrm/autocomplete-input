@@ -9,7 +9,12 @@ import { stringify } from "qs"
 const fetchMovies = async (
   query: string = "",
   page: number = 1
-): Promise<{ results: Movie[]; time: number; serverTime: number }> => {
+): Promise<{
+  results: Movie[]
+  time: number
+  serverTime: number
+  cached?: boolean
+}> => {
   const start = Date.now()
   const params = {
     page,
@@ -20,9 +25,13 @@ const fetchMovies = async (
       addQueryPrefix: true,
     })}`
   )
-  const data = (await response.json()) as { results: Movie[], serverTime: number }
+  const data = (await response.json()) as {
+    results: Movie[]
+    serverTime: number
+    cached?: boolean
+  }
   const diff = Date.now() - start
-  return { results: data.results, time: diff, serverTime: data.serverTime }
+  return { results: data.results, time: diff, serverTime: data.serverTime, cached: data.cached }
 }
 
 const hasMore = (page: number, query: string = ""): boolean => {
@@ -40,13 +49,14 @@ type UseMovieList = {
   setMovies: (movies: Movie[]) => void
   time?: number
   serverTime?: number
+  cached?: boolean
 }
 
 export default function useMovieList(query: string = ""): UseMovieList {
   const [pageNumber, setPageNumber] = useState<number>(1)
   const [movies, setMovies] = useState<Movie[]>([])
 
-  const { data, isPending, isFetching, refetch } = useQuery({
+  const { data, isPending, isFetching } = useQuery({
     queryKey: ["movies", query, pageNumber],
     queryFn: ({ queryKey }) =>
       fetchMovies(queryKey[1] as string, queryKey[2] as number),
@@ -77,5 +87,6 @@ export default function useMovieList(query: string = ""): UseMovieList {
     setMovies,
     time: data?.time,
     serverTime: data?.serverTime,
+    cached: data?.cached,
   }
 }

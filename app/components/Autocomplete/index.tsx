@@ -19,8 +19,16 @@ export default function AutoCompleteContainer({
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [query, setQuery] = useState<string>("")
   const debouncedQuery = useDebounce(query, 750)
-  const { movies, isLoading, hasMore, loadMore, setMovies, time, serverTime } =
-    useMovieList(debouncedQuery)
+  const {
+    movies,
+    isLoading,
+    hasMore,
+    loadMore,
+    setMovies,
+    time,
+    serverTime,
+    cached,
+  } = useMovieList(debouncedQuery)
   const prevMovies = useRef<Movie[]>(movies)
 
   useEffect(() => {
@@ -65,15 +73,36 @@ export default function AutoCompleteContainer({
         onSelectionChange={onSelectionChange}
       />
 
-      <div style={{ position: "fixed", top: "0px", right: "0px", margin: "2rem 3rem" }}>
+      <div
+        style={{
+          position: "fixed",
+          top: "0px",
+          right: "0px",
+          margin: "2rem 3rem",
+        }}
+      >
         {Number(serverTime) !== 0 && movies.length && (
-          <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="server">
+          <div
+            className={`text-s ${textClassName} mt-2 ml-1`}
+            data-testid="server"
+          >
             Server: {movies.length} result(s) in {serverTime}ms
           </div>
         )}
         {Number(time) !== 0 && movies.length && (
-          <div className={`text-s ${textClassName} mt-2 ml-1`} data-testid="network">
+          <div
+            className={`text-s ${textClassName} mt-2 ml-1`}
+            data-testid="network"
+          >
             Network: {movies.length} result(s) in {time}ms
+          </div>
+        )}
+        {cached !== undefined && (
+          <div
+            className={`text-s ${textClassName} mt-2 ml-1`}
+            data-testid="cached"
+          >
+            Redis Cached: {cached ? "true" : "false"}
           </div>
         )}
       </div>

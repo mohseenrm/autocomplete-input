@@ -1,6 +1,7 @@
 import { type NextRequest } from "next/server"
 import { getTrie, getMoviesWithArgs } from "@/cache"
 import { searchTrie } from "@/app/trie"
+import { getRedis } from "@/app/redis"
 
 export async function GET(request: NextRequest) {
   const start = Date.now()
@@ -48,14 +49,44 @@ export async function GET(request: NextRequest) {
     )
   }
 
+  const redisKey = `query:${query.toLowerCase()}`
+  const redis = getRedis()
+
+  try {
+    // await redis.connect()
+    const cachedResults = await redis.call("JSON.GET", redisKey, "$")
+    const parsedCachedResults = JSON.parse(cachedResults as string)
+
+    if (parsedCachedResults && Array.isArray(parsedCachedResults)) {
+      const diff = Date.now() - start
+      return Response.json({
+        query,
+        results: parsedCachedResults[0],
+        serverTime: diff,
+        cached: true,
+      })
+    }
+  } catch (error) {
+    console.error("Failed to connect to redis")
+    console.error(error)
+  }
+
   const trie = await getTrie()
   const prefixTrie = trie
   const results = await searchTrie(prefixTrie, query)
   const diff = Date.now() - start
 
+  try {
+    await redis.call("JSON.SET", redisKey, "$", JSON.stringify(results))
+  } catch (error) {
+    console.error("Failed to set cache in redis")
+    console.error(error)
+  }
+
   return Response.json({
     query,
     results,
     serverTime: diff,
+    cached: false,
   })
 }
