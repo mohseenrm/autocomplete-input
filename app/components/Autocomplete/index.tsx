@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useInfiniteScroll } from "@nextui-org/use-infinite-scroll"
 import { useDebounce } from "@uidotdev/usehooks"
 
@@ -15,7 +15,22 @@ export default function AutoCompleteContainer({ onSelectMovie }: AutoCompleteCon
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [query, setQuery] = useState<string>("")
   const debouncedQuery = useDebounce(query, 750)
-  const { movies, isLoading, hasMore, loadMore } = useMovieList(debouncedQuery)
+  const { movies, isLoading, hasMore, loadMore, setMovies } = useMovieList(debouncedQuery)
+  const prevMovies = useRef<Movie[]>(movies)
+
+  useEffect(() => {
+    if (debouncedQuery === "" && movies.length > 0) {
+      prevMovies.current = movies
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [movies])
+
+  useEffect(() => {
+    if (debouncedQuery === "" && prevMovies.current.length > 0) {
+      setMovies(prevMovies.current)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedQuery])
 
   const [_, scrollRef] = useInfiniteScroll({
     hasMore,
