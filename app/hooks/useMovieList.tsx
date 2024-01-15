@@ -54,7 +54,7 @@ export default function useMovieList(query: string = ""): UseMovieList {
   }, [data])
 
   const loadMore = () => {
-    if (hasMore(pageNumber)) {
+    if (hasMore(pageNumber, query)) {
       setPageNumber(pageNumber + 1)
     }
   }
